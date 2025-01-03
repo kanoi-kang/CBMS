@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>注册</title>
+    <link rel="icon" href="../static/image/favicon.ico" type="image/x-icon">
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-image: url("/image/register.jpg");
+            /* 背景图片覆盖整个屏幕 */
+            background-size: cover;
+            /* 背景图片固定，不随页面滚动 */
+            background-attachment: fixed;
+            /* 背景图片居中 */
+            background-position: center;
+            /* 背景图片重复 */
+            background-repeat: no-repeat;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .form-box {
+            width: 25%;
+            margin: 10px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            width: 90%;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .form-group button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .form-group button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="form-box">
+        <form action="/user/register" method="post">
+            <h2>注册新用户</h2>
+            <div class="form-group">
+                <label for="username">用户名：</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">密码：</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <div class="form-group">
+                <label for="confirmPassword">确认密码：</label>
+                <input type="password" id="confirmPassword" name="confirmPassWord" required>
+            </div>
+            <div class="form-group">
+                <button type="submit" onclick="mention()">确定</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    function mention(){
+
+        alert('注册成功!');
+    }
+</script>
+</body>
+</html>

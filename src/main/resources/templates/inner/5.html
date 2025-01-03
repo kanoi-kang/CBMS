@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>录入司机违章信息</title>
+    <style>
+        body {
+            font-family: kaiti, sans-serif;
+        }
+        .container{
+            max-width: 800px auto; /* 调整宽度以适应横向排列的表单 */
+            margin: 50px auto;
+            background: rgba(231, 229, 229, 0.7);
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .form-group {
+            display: inline-flex; /* 使用flex布局使表单横向排列 */
+            margin-bottom: 15px;
+            align-items: center; /*垂直居中对齐 */
+        }
+        .form-group label {
+            margin-right: 0px; /* 添加右边距 */
+            min-width: 80px; /* 设置标签宽度 */
+            align-content: flex-end;
+            text-align: right;
+        }
+
+        .form-group input{
+            margin-left: 10px;
+            margin-right: 10px;
+            width: 110px;
+            height: 25px;
+        }
+        .form-group select {
+            /* display: flex;
+            flex-grow: auto;
+            flex-direction: row; */
+            margin-left: 3px;
+            margin-right: 20px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .form-group input[type="submit"] {
+            width: 120px; /* 设置提交按钮宽度 */
+            height: 45px;
+            align-items: center;
+            padding: 8px;
+            border: none;
+            background-color: #5cb85c;
+            color: white;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .form-group input[type="submit"]:hover {
+            background-color: #4cae4c;
+        }
+        .records-container{
+            max-width: 800px auto; /* 调整宽度以适应横向排列的表单 */
+            margin: 50px auto;
+            background: rgba(231, 229, 229, 0.7);
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+
+        .records-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .records-table th,
+        .records-table td {
+            border: 1px solid #d0cfcf;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .records-table th {
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h3>查询司机违章信息</h3>
+        <form action="/api/search/violate" method="post">
+            <div class="form-group">
+                <label for="Sname">司机名称:</label>
+                <input type="text" id="Sname" name="Sname" required>
+            </div>
+            <div class="form-group">
+                <label for="StartDate">起始时间:</label>
+                <input type="date" id="StartDate" name="StartDate" >
+            </div>
+            <div class="form-group">
+                <label for="EndDate">终止时间:</label>
+                <input type="date" id="EndDate" name="EndDate" >
+            </div>
+            <!-- 这里可以继续添加其他需要的信息，如联系方式、住址等 -->
+            <div class="form-group">
+                <input type="submit" value="提交">
+            </div>
+        </form>
+    </div>
+    <!-- 提交记录的表格 -->
+    <div class="records-container">
+        <h3>查询结果</h3>
+        <table class="records-table">
+        <thead>
+            <tr>
+                <th>违章编号</th>
+                <th>司机名称</th>
+                <th>违章时间</th>
+                <th>事发地</th>
+                <th>车牌号</th>
+                <th>违章类型</th>
+                <th>处罚</th>
+            </tr>
+        </thead>
+        <tbody class="records-body">
+            <!-- 记录将在这里插入 -->
+        </tbody>
+        </table>
+    </div>
+    <!--查询的script待修改-->
+<script>
+ document.querySelector('form').addEventListener('submit', function (event) {
+        const tableBody = document.querySelector('.records-table tbody');
+        tableBody.innerHTML = ''; // 清空现有的表格内容
+        event.preventDefault(); // 阻止表单默认提交行为
+        // 获取表单数据
+        var record = {
+            Sname : document.getElementById('Sname').value,
+            StartDate:new Date(document.getElementById('StartDate').value),
+            EndDate:new Date(document.getElementById('EndDate').value)
+        };
+
+        // 创建XMLHttpRequest对象
+        var xhr = new XMLHttpRequest();
+        // 配置请求类型、URL以及是否异步处理
+        xhr.open('POST', '/api/search/violate', true);
+        // 设置请求头，指明发送的是JSON格式的数据
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        // 设置响应类型为JSON
+        xhr.responseType = 'json';
+
+        // 定义请求完成的处理函数
+        xhr.onload = function () {
+            if (xhr.status >= 200 && xhr.status < 300) {
+                // 请求成功，调用函数来展示司机违章信息
+                displayDrivers(xhr.response);
+            } else {
+                // 请求失败，处理错误
+                console.error('The request failed!');
+            }
+        };
+
+        // 定义请求发生错误的处理函数
+        xhr.onerror = function () {
+            console.error('Request failed due to a network error.');
+        };
+
+        // 发送请求，将JavaScript对象转换为JSON字符串作为请求体
+        xhr.send(JSON.stringify(record));
+    });
+
+    // 函数用于将司机信息添加到表格中
+    function displayDrivers(drivers) {
+        const tableBody = document.querySelector('.records-table tbody');
+        tableBody.innerHTML = ''; // 清空现有的表格内容
+
+        // 遍历司机数组
+        drivers.forEach(driver => {
+            // 创建新的表格行
+            const row = tableBody.insertRow();
+            // 创建单元格并填充数据
+            const cellVno = row.insertCell(0);
+            cellVno.textContent = driver.vno;
+            const cellSname = row.insertCell(1);
+            cellSname.textContent = driver.Sname;
+            const cellDate = row.insertCell(2);
+            cellDate.textContent = driver.vdate;
+            const cellLocation = row.insertCell(3);
+            cellLocation.textContent = driver.location;
+            const cellCarId = row.insertCell(4);
+            cellCarId.textContent = driver.carId;
+            const cellVtype = row.insertCell(5);
+            cellVtype.textContent = driver.vtype;
+            const cellPunish = row.insertCell(6);
+            cellPunish.textContent = driver.punish;
+        });
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>录入司机基本信息</title>
+    <style>
+        body {
+            font-family: kaiti, sans-serif;
+        }
+
+        .container {
+            max-width: 800px auto; /* 调整宽度以适应横向排列的表单 */
+            margin: 50px auto;
+            background: rgba(231, 229, 229, 0.7);
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .form-group {
+            display: inline-flex; /* 使用flex布局使表单横向排列 */
+            margin-bottom: 15px;
+            align-items: center; /*垂直居中对齐 */
+        }
+
+        .form-group label {
+            margin-right: 0px; /* 添加右边距 */
+            min-width: 80px; /* 设置标签宽度 */
+            align-content: flex-end;
+            text-align: right;
+        }
+
+        .form-group input {
+            margin-left: 10px;
+            margin-right: 10px;
+            width: 110px;
+            height: 25px;
+        }
+
+        .form-group select {
+            /* display: flex;
+            flex-grow: auto;
+            flex-direction: row; */
+            margin-left: 3px;
+            margin-right: 20px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .form-group input[type="submit"] {
+            width: 120px; /* 设置提交按钮宽度 */
+            height: 45px;
+            align-items: center;
+            padding: 8px;
+            border: none;
+            background-color: #5cb85c;
+            color: white;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .form-group input[type="submit"]:hover {
+            background-color: #4cae4c;
+        }
+
+        .records-container {
+            max-width: 800px auto; /* 调整宽度以适应横向排列的表单 */
+            margin: 50px auto;
+            background: rgba(231, 229, 229, 0.7);
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+
+        .records-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .records-table th,
+        .records-table td {
+            border: 1px solid #d0cfcf;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .records-table th {
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h3>查询司机基本信息</h3>
+    <form action="/api/search/drivers" method="post">
+        <div class="form-group">
+            <label for="Sno">工号:</label>
+            <input type="text" id="Sno" name="Sno">
+        </div>
+        <div class="form-group">
+            <label for="Sname">姓名:</label>
+            <input type="text" id="Sname" name="Sname">
+        </div>
+        <div class="form-group">
+            <label for="Gender">性别:</label>
+            <select id="Gender" name="Gender">
+                <option value="">请选择性别</option>
+                <option value="男">男</option>
+                <option value="女">女</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="Sage">年龄:</label>
+            <input type="number" id="Sage" name="Sage" min="0" step="1">
+        </div>
+        <div class="form-group">
+            <label for="Stel">电话:</label>
+            <input type="text" id="Stel" name="Stel">
+        </div>
+        <div class="form-group">
+            <label for="Rno">工作路线:</label>
+            <input type="text" id="Rno" name="Rno">
+        </div>
+        <!--要求查询某个车队下的司机信息，所以这里设置车队名称为必填项，也可以通过其他非必填项查询-->
+        <div class="form-group">
+            <label for="Fname">所属车队:</label>
+            <input type="text" id="Fname" name="Fname" required>
+        </div>
+        <!-- 这里可以继续添加其他需要的信息，如联系方式、住址等 -->
+        <div class="form-group">
+            <input type="submit" value="提交">
+        </div>
+    </form>
+</div>
+<!-- 提交记录的表格 -->
+<div class="records-container">
+    <h3>查询结果</h3>
+    <table class="records-table">
+        <thead>
+        <tr>
+            <th>工号</th>
+            <th>姓名</th>
+            <th>性别</th>
+            <th>年龄</th>
+            <th>电话</th>
+            <th>工作线路</th>
+            <th>所属车队</th>
+        </tr>
+        </thead>
+        <tbody class="records-body">
+        <!-- 记录将在这里插入 -->
+        </tbody>
+    </table>
+</div>
+<!--查询的script待修改-->
+<script>
+    document.querySelector('form').addEventListener('submit', function (event) {
+        const tableBody = document.querySelector('.records-table tbody');
+        tableBody.innerHTML = ''; // 清空现有的表格内容
+        event.preventDefault(); // 阻止表单默认提交行为
+        // 获取表单数据
+        var record = {
+            Sno: document.getElementById('Sno').value,
+            Sname: document.getElementById('Sname').value,
+            Gender: document.getElementById('Gender').value,
+            Stel: document.getElementById('Stel').value,
+            Sage: parseInt(document.getElementById('Sage').value, 10),
+            Rno: parseInt(document.getElementById('Rno').value, 10),
+            Fname: document.getElementById('Fname').value,
+        };
+
+        // 创建XMLHttpRequest对象
+        var xhr = new XMLHttpRequest();
+        // 配置请求类型、URL以及是否异步处理
+        xhr.open('POST', '/api/search/drivers', true);
+        // 设置请求头，指明发送的是JSON格式的数据
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        // 设置响应类型为JSON
+        xhr.responseType = 'json';
+
+        // 定义请求完成的处理函数
+        xhr.onload = function () {
+            if (xhr.status >= 200 && xhr.status < 300) {
+                // 请求成功，调用函数来展示司机信息
+                displayDrivers(xhr.response);
+            } else {
+                // 请求失败，处理错误
+                console.error('The request failed!');
+            }
+        };
+
+        // 定义请求发生错误的处理函数
+        xhr.onerror = function () {
+            console.error('Request failed due to a network error.');
+        };
+
+        // 发送请求，将JavaScript对象转换为JSON字符串作为请求体
+        xhr.send(JSON.stringify(record));
+
+    });
+
+    // 函数用于将司机信息添加到表格中
+    function displayDrivers(drivers) {
+        const tableBody = document.querySelector('.records-table tbody');
+        tableBody.innerHTML = ''; // 清空现有的表格内容
+
+        // 遍历司机数组
+        drivers.forEach(driver => {
+            // 创建新的表格行
+            const row = tableBody.insertRow();
+            // 创建单元格并填充数据
+            const cellSno = row.insertCell(0);
+            cellSno.textContent = driver.Sno;
+            const cellSname = row.insertCell(1);
+            cellSname.textContent = driver.Sname;
+            const cellGender = row.insertCell(2);
+            cellGender.textContent = driver.Gender;
+            const cellStel = row.insertCell(3);
+            cellStel.textContent = driver.Stel;
+            const cellSage = row.insertCell(4);
+            cellSage.textContent = driver.Sage;
+            const cellRno = row.insertCell(5);
+            cellRno.textContent = driver.Rno;
+            const cellFname = row.insertCell(6);
+            cellFname.textContent = driver.Fname;
+        });
+    }
+</script>
+
+</body>
+</html>

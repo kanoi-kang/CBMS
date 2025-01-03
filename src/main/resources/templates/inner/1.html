@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>录入司机基本信息</title>
+    <style>
+        body {
+            font-family: kaiti, sans-serif;
+        }
+
+        .container {
+            max-width: 800px auto; /* 调整宽度以适应横向排列的表单 */
+            margin: 50px auto;
+            background: rgba(231, 229, 229, 0.7);
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .form-group {
+            display: inline-flex; /* 使用flex布局使表单横向排列 */
+            margin-bottom: 15px;
+            align-items: center; /*垂直居中对齐 */
+        }
+
+        .form-group label {
+            margin-right: 0px; /* 添加右边距 */
+            min-width: 80px; /* 设置标签宽度 */
+            align-content: flex-end;
+            text-align: right;
+        }
+
+        .form-group input {
+            margin-left: 10px;
+            margin-right: 10px;
+            width: 110px;
+            height: 25px;
+        }
+
+        .form-group select {
+            /* display: flex;
+            flex-grow: auto;
+            flex-direction: row; */
+            margin-left: 3px;
+            margin-right: 20px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .form-group input[type="submit"] {
+            width: 120px; /* 设置提交按钮宽度 */
+            height: 45px;
+            align-items: center;
+            padding: 8px;
+            border: none;
+            background-color: #5cb85c;
+            color: white;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .form-group input[type="submit"]:hover {
+            background-color: #4cae4c;
+        }
+
+        .records-container {
+            max-width: 800px auto; /* 调整宽度以适应横向排列的表单 */
+            margin: 50px auto;
+            background: rgba(231, 229, 229, 0.7);
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+
+        .records-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .records-table th,
+        .records-table td {
+            border: 1px solid #d0cfcf;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .records-table th {
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h3>录入司机基本信息</h3>
+    <form action="/api/insert/drivers" method="post">
+        <div class="form-group">
+            <label for="Sno">工号:</label>
+            <input type="text" id="Sno" name="Sno" required>
+        </div>
+        <div class="form-group">
+            <label for="Sname">姓名:</label>
+            <input type="text" id="Sname" name="Sname" required>
+        </div>
+        <div class="form-group">
+            <label for="Gender">性别:</label>
+            <select id="Gender" name="Gender" required>
+                <option value="">请选择性别</option>
+                <option value="男">男</option>
+                <option value="女">女</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="Sage">年龄:</label>
+            <input type="number" id="Sage" name="Sage" required min="0" step="1">
+        </div>
+        <div class="form-group">
+            <label for="Stel">电话:</label>
+            <input type="text" id="Stel" name="Stel" required>
+        </div>
+        <div class="form-group">
+            <label for="Rno">工作路线:</label>
+            <input type="number" id="Rno" name="Rno" required min="0" step="1">
+        </div>
+        <div class="form-group">
+            <label for="Fname">所属车队:</label>
+            <input type="text" id="Fname" name="Fname" required>
+        </div>
+        <!-- 这里可以继续添加其他需要的信息，如联系方式、住址等 -->
+        <div class="form-group">
+            <input type="submit" value="提交">
+        </div>
+    </form>
+</div>
+<!-- 提交记录的表格 -->
+<div class="records-container">
+    <h3>修改记录</h3>
+    <table class="records-table">
+        <thead>
+        <tr>
+            <th>工号</th>
+            <th>姓名</th>
+            <th>性别</th>
+            <th>年龄</th>
+            <th>电话</th>
+            <th>工作线路</th>
+            <th>所属车队</th>
+            <th>修改状态</th>
+            <th>修改日期</th>
+        </tr>
+        </thead>
+        <tbody class="records-body">
+        <!-- 记录将在这里插入 -->
+        </tbody>
+    </table>
+    <!-- 分页导航 -->
+    <div class="pagination">
+        <button class="prev-page">上一页</button>
+        <span class="page-info">第 <span class="current-page">1</span> 页，共</span>
+            <span><span
+                class="total-pages">1</span> 页</span>
+        <button class="next-page">下一页</button>
+    </div>
+</div>
+
+<script>
+    document.querySelector('form').addEventListener('submit', function (event) {
+        event.preventDefault(); // 阻止表单默认提交行为
+        const tableBody = document.querySelector('.records-table tbody');
+        tableBody.innerHTML = ''; // 清空现有的表格内容
+        // 获取表单数据
+        var record = {
+            Sno: document.getElementById('Sno').value,
+            Sname: document.getElementById('Sname').value,
+            Gender: document.getElementById('Gender').value,
+            Stel: document.getElementById('Stel').value,
+            Sage: parseInt(document.getElementById('Sage').value, 10),
+            Rno: parseInt(document.getElementById('Rno').value, 10),
+            Fname: document.getElementById('Fname').value,
+        };
+
+        // 创建XMLHttpRequest对象
+        var xhr = new XMLHttpRequest();
+        // 配置请求类型、URL以及是否异步处理
+        xhr.open('POST', '/api/insert/drivers', true);
+        // 设置请求头，指明发送的是JSON格式的数据
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        // 设置响应类型为JSON
+        xhr.responseType = 'json';
+
+        // 定义请求完成的处理函数
+        xhr.onload = function () {
+            if (xhr.status===200) {
+                record.status = "成功"
+            } else {
+                record.status = "失败"
+            }
+            record.currentDate = new Date().toLocaleString(); // 内联变量
+            // 保存记录到本地存储
+            saveRecord(record);
+            // 重新加载当前页面的记录
+            displayRecords(currentPage);
+        };
+
+        // 定义请求发生错误的处理函数
+        xhr.onerror = function () {
+            console.error('Request failed due to a network error.');
+        };
+
+        // 发送请求，将JavaScript对象转换为JSON字符串作为请求体
+        xhr.send(JSON.stringify(record));
+
+    });
+
+
+    // 假设每页显示5条记录
+    var recordsPerPage = 5;
+    var currentPage = 1;
+
+    // 用于存储所有记录的数组
+    var allRecords = [];
+
+    // 从本地存储获取所有记录
+    function getAllRecords() {
+        // 这里假设我们使用localStorage来存储记录
+        var records = localStorage.getItem('driverRecords');
+        return records ? JSON.parse(records) : [];
+    }
+
+    // 保存记录到本地存储
+    function saveRecord(record) {
+        allRecords = getAllRecords();
+        allRecords.push(record);
+        localStorage.setItem('driverRecords', JSON.stringify(allRecords));
+    }
+
+    // 显示特定页的记录
+    function displayRecords(page) {
+        allRecords = getAllRecords();
+        var totalRecords = allRecords.length;
+        var totalPages = Math.ceil(totalRecords / recordsPerPage);
+
+        // 清空现有的表格内容
+        var tableBody = document.querySelector('.records-body');
+        tableBody.innerHTML = '';
+
+        // 如果没有记录，则更新分页信息并返回
+        if (totalRecords === 0) {
+            updatePagination();
+            return;
+        }
+
+        var startIndex = (page - 1) * recordsPerPage;
+        var endIndex = startIndex + recordsPerPage;
+        var recordsToDisplay = allRecords.slice(startIndex, endIndex);
+
+        // 添加新的记录到表格
+        recordsToDisplay.forEach(function (record, index) {
+            var row = document.createElement('tr');
+            Object.keys(record).forEach(function (key) {
+                var cell = document.createElement('td');
+                cell.textContent = record[key];
+                // 根据 status 字段设置字体颜色
+                if (key === 'status') {
+                    if (record[key] === '成功') {
+                        cell.style.color = 'green';
+                    } else if (record[key] === '失败') {
+                        cell.style.color = 'red';
+                    }
+                }
+                row.appendChild(cell);
+            });
+            // 添加删除按钮
+            var deleteCell = document.createElement('td');
+            var deleteButton = document.createElement('button');
+            deleteButton.textContent = '删除';
+            // 使用闭包来保持对正确索引的引用
+            deleteButton.onclick = (function (localIndex) {
+                return function () {
+                    deleteRecord(localIndex + startIndex);
+                };
+            })(index);
+            deleteCell.appendChild(deleteButton);
+            row.appendChild(deleteCell);
+            tableBody.appendChild(row);
+        });
+
+        // 更新分页信息
+        updatePagination();
+    }
+
+    // 删除记录
+    function deleteRecord(index) {
+        allRecords = getAllRecords();
+        allRecords.splice(index, 1); // 删除指定索引的记录
+        localStorage.setItem('driverRecords', JSON.stringify(allRecords)); // 更新本地存储
+
+        // 重新计算当前页的记录
+        var totalRecords = allRecords.length;
+        var totalPages = Math.ceil(totalRecords / recordsPerPage);
+        if (totalPages === 0) {
+            currentPage = 1; // 如果没有记录，则重置当前页为1
+        } else if (currentPage > totalPages) {
+            currentPage = totalPages; // 如果当前页大于总页数，则设置为最后一页
+        }
+        displayRecords(currentPage); // 重新显示当前页的记录
+    }
+
+    // 更新分页信息
+    function updatePagination() {
+        var totalRecords = getAllRecords().length;
+        var totalPages = Math.ceil(totalRecords / recordsPerPage);
+        document.querySelector('.current-page').textContent = currentPage;
+        document.querySelector('.total-pages').textContent = totalPages;
+    }
+
+    // 初始化显示第一页
+    displayRecords(currentPage);
+
+    // 分页导航按钮点击事件
+    document.querySelector('.prev-page').addEventListener('click', function () {
+        if (currentPage > 1) {
+            currentPage--;
+            displayRecords(currentPage);
+        }
+    });
+
+    document.querySelector('.next-page').addEventListener('click', function () {
+        var totalRecords = getAllRecords().length;
+        var totalPages = Math.ceil(totalRecords / recordsPerPage);
+        if (currentPage < totalPages) {
+            currentPage++;
+            displayRecords(currentPage);
+        }
+    });
+</script>
+
+</body>
+</html>

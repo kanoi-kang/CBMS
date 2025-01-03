@@ -1,18 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>登录页面</title>
-    <link rel="shortcut icon" href="image/favicon.ico" type="image/x-icon">
-    <link rel="icon" href="image/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/image/favicon.ico" type="image/x-icon">
     <style>
 
         body, html {
             height: 100%;
             margin: 0;
             font-family: Arial, sans-serif;
-            background-image: url("image/login.jpg");
+            background-image: url("/image/login.jpg");
             /* 背景图片覆盖整个屏幕 */
             background-size: cover;
             /* 背景图片固定，不随页面滚动 */
@@ -80,21 +79,24 @@
         a:hover {
             text-decoration: underline;
         }
+        .error-message{
+            color: red;
+        }
     </style>
 
 </head>
 <body>
 <div class="container">
     <div class="form-box">
-        <form class="form-login" action="/user/login">
+        <form class="form-login" action="/user/login" method="post">
             <h2>登录</h2>
             <div class="form-group">
-                <label for="login-username">用户名：</label>
-                <input type="text" id="login-username" required>
+              <label for="username">用户名：</label>
+                <input type="text" id="username" name="username" required>
             </div>
             <div class="form-group">
-                <label for="login-password">密码：</label>
-                <input type="password" id="login-password" required>
+               <label for="password">密码：</label>
+                <input type="password" id="password" name="password" required>
             </div>
             <div class="form-group">
                 <button type="button" onclick="getVerificationCode()">获取验证码</button>
@@ -103,7 +105,10 @@
                 <button type="submit" onclick="">登录</button>
             </div>
             <div class="form-group">
-                <a href="#">忘记密码?</a> | <a href="register.html">新用户注册</a>
+                <a href="#">忘记密码?</a> | <a href="/user/register">新用户注册</a>
+            </div>
+            <div th:if="${error}" class="error-message">
+                <p th:text="${error}"></p>
             </div>
         </form>
     </div>
@@ -114,10 +119,22 @@
     }
 </script>
 <script>
-    function GotoPage(){
+// 当文档加载完毕时绑定事件
+document.addEventListener('DOMContentLoaded', function() {
+    // 获取表单元素
+    var loginForm = document.querySelector('.form-login');
 
-    }
+    // 为表单添加键盘按下事件监听器
+    loginForm.addEventListener('keypress', function(event) {
+        // 检查按下的键是否是Enter键
+        if (event.key === 'Enter') {
+            // 阻止表单的默认提交行为
+            // event.preventDefault();这里会影响Enter的跳转
+            // 触发登录按钮的点击事件
+            document.getElementById('loginButton').click();
+        }
+    });
+});
 </script>
-
 </body>
 </html>

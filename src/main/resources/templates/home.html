@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.cn/cdnjs/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="icon" href="/image/favicon.ico" type="image/x-icon">
+    <style>
+        body { 
+            font-family: "kaiti", sans-serif;
+            background-image:url("/image/bg.jpg"); /* 指定图片路径 */
+            background-repeat: no-repeat; /* 背景图像不重复 */
+            background-size: cover; /* 背景图像覆盖整个元素 */
+            background-position: center center; /* 背景图像居中 */
+        }
+
+        #header-bar {
+            background-color: transparent; /* 横条背景颜色 */
+            color: #000; /* 文字颜色 */
+            text-align: center; /* 文字居中 */
+            padding: 10px; /* 内边距 */
+            font-size: 30px; /* 字体大小 */
+            font-weight: bold; /* 字体加粗 */
+            width: 100%; /* 横条宽度 */
+            position: fixed; /* 固定位置 */
+            top: 0; /* 顶部对齐 */
+            left: 0;
+            z-index: 1000; /* 确保在最上层 */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* 添加阴影 */
+        }
+
+        .navbar {
+            height: 100%;
+            width: 160px;
+            position: fixed;
+            z-index: 1;
+            top: 55px; /* 调整为横条高度 */
+            left: 0;
+            background-color: rgba(0,0,0,0.2);
+            overflow-x: hidden;
+            padding-top: 16px;
+            transition: background-color 0.3s; /* 平滑过渡背景颜色 */
+        }
+
+        .navbar:before {
+            content: '';
+            position: absolute;
+            top: -10px; /* 调整为横条高度的负值 */
+            left: 0;
+            width: 100%;
+            height: 20px; /* 添加一个小的三角形高度 */
+            background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0)); /* 渐变背景 */
+        }
+
+        .navbar a {
+            padding: 6px 8px 6px 16px;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: bold;
+            color: #000000;
+            display: block;
+            position: relative;
+        }
+
+        .navbar a:hover {
+            color: #f1f1f1;
+        }
+
+        .sub-nav {
+            display: none; /* 默认不显示子导航 */
+            background-color:rgba(0,0,0,0.2); /* 子导航背景颜色 */
+            padding: 0;
+            margin: 0;
+            list-style-type: none;
+        }
+
+        .sub-nav a {
+            padding: 6px 8px 6px 32px;
+            text-decoration: none;
+            font-size: 15px;
+            color: #000;
+            display: block;
+        }
+
+        .sub-nav a:hover {
+            background-color: #c7bdbd;
+        }
+
+        @media screen and (max-height: 450px) {
+            .navbar { padding-top: 15px; }
+            .navbar a { font-size: 18px; }
+        }
+        #content {
+            margin-left: 160px; /* 调整内容区域左侧边距，为导航栏留出空间 */
+            padding: 20px;
+            padding-top: 70px; /* 调整内容区域顶部边距，为标题栏留出空间 */
+        }
+
+        iframe {
+            width: 100%;
+            height: 100vh; /* 使iframe填满整个视口高度 */
+            border: none; /* 移除iframe边框 */
+        }
+    </style>
+    <title>城市公交管理系统</title>
+</head>
+<body>
+    <div id="header-bar">
+        城市公交管理系统
+    </div>
+    <nav class="navbar">
+        <a href="#" onclick="toggleSubMenu(event, 'sub-nav-1')"><i class="fa fa-fw fa-file-text-o"></i>录入信息</a>
+        <ul id="sub-nav-1" class="sub-nav">
+            <li><a th:href="@{/inner/1.html}" onclick="loadPage(this.href); return false;"><i class="fa fa-fw fa-drivers-license"></i>司机</a></li>
+            <li><a th:href="@{/inner/2.html}" onclick="loadPage(this.href); return false;"><i class="fa fa-fw fa-car"></i>汽车</a></li>
+            <li><a th:href="@{/inner/3.html}" onclick="loadPage(this.href); return false;"><i class="fa fa-fw fa-times-circle-o"></i>司机违章</a></li>
+        </ul>
+        <a href="#" onclick="toggleSubMenu(event, 'sub-nav-2')"><i class="fa fa-fw fa-search"></i>查询信息</a>
+        <ul id="sub-nav-2" class="sub-nav">
+            <li><a th:href="@{/inner/4.html}" onclick="loadPage(this.href); return false;"><i class="fa fa-fw fa-drivers-license"></i>司机</a></li>
+            <li><a th:href="@{/inner/5.html}" onclick="loadPage(this.href); return false;"><i class="fa fa-fw fa-times-circle-o"></i>司机违章</a></li>
+            <li><a th:href="@{/inner/6.html}" onclick="loadPage(this.href); return false;"><i class="fa fa-fw fa-times-rectangle-o"></i>车队违章</a></li>
+        </ul>
+    </nav>
+    <div id="content">
+         <iframe id="page-frame" th:src="@{/inner/default.html}"></iframe> <!-- 默认加载的页面 -->
+    </div>
+
+<script>
+        function toggleSubMenu(event, subNavId) {
+            event.preventDefault(); // 阻止链接默认行为
+            var subNav = document.getElementById(subNavId);
+            if (subNav.style.display === "block") {
+                subNav.style.display = "none";
+            } else {
+                subNav.style.display = "block";
+            }
+        }
+    </script>
+<script>
+        function loadPage(url) {
+            document.getElementById('page-frame').src = url; // 设置iframe的src属性来加载对应的页面
+        }
+    </script>
+</body>
+
+</html>
